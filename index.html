@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#7d422d">
+  <meta name="description" content="Offline Bluetooth file transfer for the PERCEPTOR Braille tutor.">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="./assets/icon.svg">
+  <link rel="stylesheet" href="./styles.css">
+  <title>PERCEPTOR Companion</title>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="header">
+      <a class="brand" href="#home" aria-label="PERCEPTOR Companion home">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></span>
+        <span class="brand-text"><strong>PERCEPTOR</strong><small>COMPANION APP</small></span>
+      </a>
+      <div class="header-right">
+        <span class="offline-marker" id="offline-marker"><span class="tiny-dot"></span><span id="network-label">Checking connection</span></span>
+        <button class="button button-outline button-small" id="install-btn" type="button" hidden>Install app</button>
+      </div>
+    </header>
+
+    <main id="home" class="main-container">
+      <div class="intro-tag"><span class="eyebrow-line"></span> BRAILLE TUTOR · FILE TRANSFER</div>
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <div class="hero-eyebrow"><span class="hero-dash"></span> Your reading companion</div>
+          <h1 id="hero-title">Read with <em>PERCEPTOR.</em></h1>
+          <p>Connect over Bluetooth, select a TXT or PDF document, and send its text to your Braille tutor. No internet required after setup.</p>
+          <a class="hero-link" href="#upload">Upload a reading file <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="hero-visual" aria-hidden="true">
+          <div class="device-shadow"></div>
+          <div class="device-shell">
+            <div class="device-top"><span class="device-led"></span><div class="braille-device" id="decorative-display"></div><div class="device-controls"><i></i><i></i><i></i></div></div>
+            <div class="device-edge"></div>
+          </div>
+          <div class="hero-visual-caption">2 × 8 CELL DISPLAY</div>
+        </div>
+      </section>
+
+      <div class="section-label"><span>01</span> GET CONNECTED</div>
+      <section class="connect-panel" aria-labelledby="connect-title">
+        <div class="connect-info">
+          <div class="connect-icon"><svg viewBox="0 0 24 24" width="27" height="27" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7l10 10-5 4V3l5 4L7 17"/></svg></div>
+          <div><div class="panel-title-row"><h2 id="connect-title">Bluetooth connection</h2><span class="status-pill" id="connection-badge"><span class="status-dot"></span> Disconnected</span></div>
+          <p id="connect-description">Turn on your PERCEPTOR device and connect to transfer reading material.</p></div>
+        </div>
+        <div class="connect-buttons">
+          <button class="button button-ghost" type="button" id="disconnect-btn" hidden>Disconnect</button>
+          <button class="button button-primary" type="button" id="connect-btn"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7l10 10-5 4V3l5 4L7 17"/></svg><span id="connect-btn-label">Connect device</span></button>
+        </div>
+      </section>
+      <div id="browser-alert" class="alert alert-warning" role="alert" hidden></div>
+
+      <div class="device-data" id="device-data" hidden>
+        <div><span>DEVICE NAME</span><strong id="detail-name">PERCEPTOR</strong></div>
+        <div><span>BRAILLE CELLS</span><strong id="detail-cells">Checking…</strong></div>
+        <div><span>BLE PROTOCOL</span><strong id="detail-protocol">Checking…</strong></div>
+      </div>
+
+      <div class="section-label" id="upload"><span>02</span> UPLOAD READING MATERIAL</div>
+      <section class="upload-card" aria-labelledby="upload-title">
+        <div class="section-card-head"><div><h2 id="upload-title">Choose a reading file</h2><p>Upload TXT or PDF reading material. PDFs are converted to text on your device. A successful transfer replaces the previous Reading Mode file.</p></div><div class="file-type-badge">.TXT &amp; .PDF</div></div>
+        <input id="file-input" class="visually-hidden" type="file" accept=".txt,.pdf,text/plain,application/pdf" aria-describedby="file-help">
+        <div class="drop-zone" id="drop-zone" tabindex="0" role="button" aria-label="Choose a TXT or PDF file">
+          <div class="upload-symbol"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V3m-5 5 5-5 5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg></div>
+          <div class="drop-main">Drop your file here, or <span>browse files</span></div>
+          <p id="file-help">TXT or PDF · Maximum 500 MB per file · No cloud upload</p>
+        </div>
+        <div id="selected-file" class="selected-file" hidden>
+          <div class="selected-file-icon"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h6"/></svg></div>
+          <div class="file-text"><strong id="file-name"></strong><span id="file-size"></span></div>
+          <button class="icon-button" type="button" id="remove-file" aria-label="Remove selected file" title="Remove file">×</button>
+        </div>
+        <div class="preview-block" id="preview-block" hidden>
+          <div class="preview-heading"><h3>File preview</h3><span id="preview-count"></span></div>
+          <pre id="preview-text" aria-label="Extracted text preview"></pre>
+          <div class="preview-footer"><span id="preview-note">The ESP32-S3 converts this text to Grade 1 Braille and handles paging on its own display.</span></div>
+        </div>
+        <div class="transfer-status" id="transfer-status" hidden aria-live="polite"><div class="transfer-top"><strong id="transfer-title">Uploading…</strong><span id="transfer-percent">0%</span></div><div class="progress-track" role="progressbar" id="transfer-bar" aria-label="Upload progress" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"><div class="progress-fill" id="transfer-fill"></div></div><p id="transfer-detail">Sending file directly over Bluetooth.</p></div>
+        <div class="upload-actions"><div class="privacy-note"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg> The file goes directly to your device.</div><div class="action-buttons"><button type="button" class="button button-ghost" id="cancel-btn" hidden>Cancel transfer</button><button class="button button-primary send-button" type="button" id="upload-btn" disabled>Send to PERCEPTOR <span aria-hidden="true">↗</span></button></div></div>
+      </section>
+
+      <div class="bottom-grid bottom-grid-single">
+        <section class="small-card" aria-labelledby="steps-title"><div class="card-kicker">HOW IT WORKS</div><h2 id="steps-title">Three simple steps.</h2><ol class="steps"><li><span>01</span><div><strong>Connect</strong><p>Turn on PERCEPTOR and pair using Bluetooth.</p></div></li><li><span>02</span><div><strong>Choose your file</strong><p>Select a TXT or PDF document up to 500 MB. PDFs need selectable text.</p></div></li><li><span>03</span><div><strong>Read on PERCEPTOR</strong><p>Once transferred, use the physical Next and Back buttons in Reading Mode.</p></div></li></ol></section>
+
+      </div>
+      <p class="sr-status" id="live-status" role="status" aria-live="polite"></p>
+    </main>
+    <footer class="footer"><span>PERCEPTOR <span class="footer-separator">/</span> COMPACT BRAILLE TUTOR</span><span>Offline-first · Bluetooth Low Energy</span></footer>
+  </div>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
